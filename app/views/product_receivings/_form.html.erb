@@ -1,0 +1,74 @@
+<%= form_with(model: product_receiving) do |form| %>
+  <% if product_receiving.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(product_receiving.errors.count, "error") %> prohibited this product_receiving from being saved:</h2>
+
+      <ul>
+        <% product_receiving.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :document_number, style: "display: block" %>
+    <%= form.text_field :document_number, value: "DCN#{Time.now.strftime("%d%m%y")}#{rand(10000..99999)}", readonly: true %>
+  </div>
+
+  <div>
+    <%= form.label :document_date, style: "display: block" %>
+    <%= form.date_field :document_date, id: "tanggalan" %>
+  </div>
+
+  <div>
+    <%= form.label :status, style: "display: block" %>
+    <%#= form.number_field :status %>
+    <%= form.select :status, [["New", "New"], ["Approve 1", "approve1"], ["Cancel 1", "cancel1"], ["Approve 2", "approve2"], ["Cancel 2", "cancel2"], ["Approve 3", "approve3"], ["Cancel 3", "cancel3"]] %>
+  </div>
+
+<%# SINTAKS YG DITAMBAHKAN %>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Product ID</th>
+        <th>Quantity</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody class='fields'>
+      <%= form.fields_for :product_receiving_items do |builder| %>
+        <%= render 'product_receiving_item', f: builder %>
+      <% end %>
+    </tbody>
+  </table>
+  <%# AKHIR SINTAKS YG DITAMBAHKAN %>
+
+  <br>
+
+  <div>
+    <%= form.submit %>
+    <%= link_to_add_product_receiving_item('Add Row', form, :product_receiving_items, class: 'btn btn-primary') %>
+  </div>
+<% end %>
+
+<script>
+$( document ).ready(function() {
+
+  $('form').on('click', '.remove_record', function(event) {
+    $(this).prev('input[type=hidden]').val('1');
+    $(this).closest('tr').hide();
+    return event.preventDefault();
+  });
+
+  $('form').on('click', '.add_fields', function(event) {
+    var regexp, time;
+    time = new Date().getTime();
+    regexp = new RegExp($(this).data('id'), 'g');
+    $('.fields').append($(this).data('fields').replace(regexp, time));
+    return event.preventDefault();
+  });
+  
+});
+</script>
