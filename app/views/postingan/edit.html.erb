@@ -1,0 +1,18 @@
+<h1>HALAMAN EDIT</h1>
+
+<div class="card">
+  <div class="card-body">
+    <%= form_tag("/postingan/update/#{@data.id}") do %>
+        <div class="mb-3">
+            <label for="judul" class="form-label">Judul</label>
+            <input type="text" class="form-control" id="judul" name="judul" value="<%= @data.judul%>" required>
+        </div>
+        <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <input type="text" class="form-control" id="deskripsi" name="deskripsi" value="<%= @data.deskripsi%>" required>
+        </div>
+        <a href="/postingan/index" class="btn btn-danger mb-3">Batal</a>
+        <button type="submit" class="btn btn-primary mb-3">Simpan</button>
+    <% end %>
+  </div>
+</div>
