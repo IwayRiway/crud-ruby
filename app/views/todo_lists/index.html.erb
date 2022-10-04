@@ -1,21 +1,23 @@
 <p style="color: green"><%= notice %></p>
 
 <h1>Todo lists</h1>
-
+<%= link_to "Tambah", new_todo_list_path, class: "btn btn-primary my-2" %>
 <div id="todo_lists">
     <div class="row">
         <% @todo_lists.each do |todo_list| %>
             <div class="col-sm-3">
-                <div class="card">
+                <div class="card text-bg-dark">
                     <div class="card-header">
                         <strong><%= todo_list.name %></strong>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <% no = 0 %>
-                        <% todo_list.tasks.each do |data| %>
-                            <li class="list-group-item"><%= "#{no=no+1}. #{data.name}" %></li>
-                        <% end %>
-                    </ul>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <% no = 0 %>
+                            <% todo_list.tasks.each do |data| %>
+                                <li class="list-group-item"><%= "#{no=no+1}. #{data.name}" %></li>
+                            <% end %>
+                        </ul>
+                    </div>
                     <div class="card-footer btn-toolbar">
                         <div class="btn-toolbar">
                             <%= link_to 'Edit', edit_todo_list_path(todo_list), class:"btn btn-sm btn-outline-success me-1" %>
@@ -27,5 +29,3 @@
         <% end %>
     </div>
 </div>
-
-<%= link_to "New todo list", new_todo_list_path %>
