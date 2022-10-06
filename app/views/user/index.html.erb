@@ -1,0 +1,27 @@
+<h1>User</h1>
+
+<table class="table table-striped table-bordered table-hover table-dark">
+    <thead class="thead-dark">
+      <tr>
+        <th>No</th>
+        <th>Email</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% 
+            no=0 
+            @data.each do |item| 
+        %>
+
+            <tr>
+                <td><%= no=no+1 %></td>
+                <td><%= item.email %></td>
+                <td>
+                    <a href="/user/manage/<%= item.id %>" class="btn btn-outline-success btn-sm me-1">Manage</a>
+                </td>
+            </tr>
+
+        <% end %>
+    </tbody>
+  </table>
