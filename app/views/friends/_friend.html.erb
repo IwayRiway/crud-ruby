@@ -1,0 +1,18 @@
+<div class="card">
+  <div class="card-header">
+    Detail Friend
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">
+        <%= @friend.first_name %>
+        <%= @friend.last_name %>
+    </h5>
+    <p class="card-text"><%= @friend.email %>  | <%= @friend.hp %></p>
+
+    <div class="btn-toolbar">
+        <%= link_to 'Edit', edit_friend_path(@friend), class:"btn btn-success me-1" %>
+        <%= button_to "Delete", @friend, method: :delete, class:"btn btn-danger me-1" %>
+        <%= link_to 'Back', friends_path, class:"btn btn-primary" %>
+    </div>
+  </div>
+</div>
