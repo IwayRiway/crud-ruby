@@ -1,0 +1,63 @@
+<%= form_with(model: menu) do |form| %>
+  <% if menu.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(menu.errors.count, "error") %> prohibited this menu from being saved:</h2>
+
+      <ul>
+        <% menu.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :controller, style: "display: block" %>
+    <%= form.text_field :controller %>
+  </div>
+
+  <table class='table'>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody class='fields'>
+      <%= form.fields_for :functions do |builder| %>
+        <%= render 'function', f: builder %>
+      <% end %>
+    </tbody>
+  </table>
+  <%= link_to_add_row('Add Action', form, :functions, class: 'btn btn-primary mb-5') %>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<script>
+$( document ).ready(function() {
+
+  $('form').on('click', '.remove_record', function(event) {
+    $(this).prev('input[type=hidden]').val('1');
+    $(this).closest('tr').hide();
+    return event.preventDefault();
+  });
+
+  $('form').on('click', '.add_fields', function(event) {
+    var regexp, time;
+    time = new Date().getTime();
+    regexp = new RegExp($(this).data('id'), 'g');
+    $('.fields').append($(this).data('fields').replace(regexp, time));
+    return event.preventDefault();
+  });
+  
+});
+</script>

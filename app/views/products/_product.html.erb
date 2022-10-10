@@ -1,0 +1,17 @@
+<div class="card">
+  <div class="card-header">
+    Detail Product
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">
+        <%= @product.part_name %>
+    </h5>
+    <p class="card-text"><%= @product.part_id %>  | <%= @product.status %></p>
+
+    <div class="btn-toolbar">
+        <%= link_to 'Edit', edit_product_path(@product), class:"btn btn-success me-1" %>
+        <%= button_to "Delete", @product, method: :delete, class:"btn btn-danger me-1" %>
+        <%= link_to 'Back', products_path, class:"btn btn-primary" %>
+    </div>
+  </div>
+</div>

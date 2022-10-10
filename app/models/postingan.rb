@@ -1,2 +1,0 @@
-class Postingan < ApplicationRecord
-end

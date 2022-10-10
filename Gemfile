@@ -70,3 +70,6 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem 'pagy', '~> 5.10' # omit patch digit
+gem 'devise', '~> 4.8', '>= 4.8.1'
