@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  get 'product_receivings/:id/delete', to: 'product_receivings#delete'
   post 'product_receivings/get_data', to: 'product_receivings#get_data'
   resources :product_receivings
 

@@ -1,7 +1,7 @@
 class ProductReceivingsController < ApplicationController
   include ApplicationHelper
   before_action :permission, only: [:index, :show, :new, :edit, :destroy]
-  before_action :set_product_receiving, only: %i[ show edit update destroy ]
+  before_action :set_product_receiving, only: %i[ show edit update destroy delete ]
   before_action :get_product_all, only: %i[ new edit ]
   before_action :authenticate_user!
   skip_before_action :verify_authenticity_token, only: %i[ get_data ]
@@ -79,6 +79,7 @@ class ProductReceivingsController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
 
   def get_data
     type = params[:type]
@@ -88,8 +89,18 @@ class ProductReceivingsController < ApplicationController
         render json: @data
     else
         @data = ProductReceivingItem.all
-        render json: @data.to_json(:include => :product_receiving)
+        render json: @data.to_json(:include => [:product_receiving, :product])
     end
+  end
+
+  def delete
+    abort "MASUK"
+    # @product_receiving.destroy
+
+    # respond_to do |format|
+    #   format.html { redirect_to product_receivings_url, notice: "Product receiving was successfully destroyed." }
+    #   format.json { head :no_content }
+    # end
   end
 
   private
