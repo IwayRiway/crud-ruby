@@ -2,6 +2,7 @@ class ProductReceivingsController < ApplicationController
   include ApplicationHelper
   before_action :permission, except: [:create, :update]
   before_action :set_product_receiving, only: %i[ show edit update destroy ]
+  before_action :get_product_all, only: %i[ new edit ]
   before_action :authenticate_user!
 
   # GET /product_receivings or /product_receivings.json
@@ -17,7 +18,6 @@ class ProductReceivingsController < ApplicationController
   def new
     @product_receiving = ProductReceiving.new
     @product_receiving.product_receiving_items.build
-    @products = Product.all
     # @number = (ProductReceiving.count + 1).to_s.rjust(5, "0")
     # @number = ProductReceiving.where("MONTH(document_date) = 10", "YEAR(document_date) = 2022").count
     # abort @number.to_s
@@ -26,7 +26,6 @@ class ProductReceivingsController < ApplicationController
   # GET /product_receivings/1/edit
   def edit
     @edit = true
-    @products = Product.all
   end
 
   # POST /product_receivings or /product_receivings.json
@@ -46,14 +45,22 @@ class ProductReceivingsController < ApplicationController
 
   # PATCH/PUT /product_receivings/1 or /product_receivings/1.json
   def update
-    respond_to do |format|
-      if @product_receiving.update(product_receiving_params)
-        format.html { redirect_to product_receiving_url(@product_receiving), notice: "Product receiving was successfully updated." }
-        format.json { render :show, status: :ok, location: @product_receiving }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @product_receiving.errors, status: :unprocessable_entity }
-      end
+    document_date_old = @product_receiving.document_date
+    document_date_now = Date.parse(product_receiving_params[:document_date])
+
+    if document_date_old.strftime("%m") != document_date_now.strftime("%m")
+        flash[:fail] = "month and year on the date of the document cannot be changed"
+        redirect_to edit_product_receiving_path(@product_receiving)
+    else
+        respond_to do |format|
+            if @product_receiving.update(product_receiving_params)
+              format.html { redirect_to product_receiving_url(@product_receiving), notice: "Product receiving was successfully updated." }
+              format.json { render :show, status: :ok, location: @product_receiving }
+            else
+              format.html { render :edit, status: :unprocessable_entity }
+              format.json { render json: @product_receiving.errors, status: :unprocessable_entity }
+            end
+        end
     end
   end
 
@@ -71,6 +78,10 @@ class ProductReceivingsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_product_receiving
       @product_receiving = ProductReceiving.find(params[:id])
+    end
+
+    def get_product_all
+      @products = Product.all
     end
 
     # def set_product_receiving_with_product_receiving_items
