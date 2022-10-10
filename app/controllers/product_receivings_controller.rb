@@ -1,13 +1,19 @@
 class ProductReceivingsController < ApplicationController
   include ApplicationHelper
-  before_action :permission, except: [:create, :update]
+  before_action :permission, only: [:index, :show, :new, :edit, :destroy]
   before_action :set_product_receiving, only: %i[ show edit update destroy ]
   before_action :get_product_all, only: %i[ new edit ]
   before_action :authenticate_user!
+  skip_before_action :verify_authenticity_token, only: %i[ get_data ]
 
   # GET /product_receivings or /product_receivings.json
   def index
     @product_receivings = ProductReceiving.all
+    # @data = ProductReceivingItem.includes(:product_receiving).all
+    # @data.each do |d|
+    #     abort d.product_receiving.inspect
+    # end
+    # abort @data.product_receiving
   end
 
   # GET /product_receivings/1 or /product_receivings/1.json
@@ -71,6 +77,18 @@ class ProductReceivingsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to product_receivings_url, notice: "Product receiving was successfully destroyed." }
       format.json { head :no_content }
+    end
+  end
+
+  def get_data
+    type = params[:type]
+
+    if type == 'header'
+        @data = ProductReceiving.all
+        render json: @data
+    else
+        @data = ProductReceivingItem.all
+        render json: @data.to_json(:include => :product_receiving)
     end
   end
 
