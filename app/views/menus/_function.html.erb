@@ -1,0 +1,8 @@
+<tr>
+  <td>
+    <%= f.hidden_field  :_destroy %>
+    <%= link_to 'Delete', '#', class: 'btn btn-sm btn-outline-danger remove_record' %>
+  </td>
+  <td><%= f.text_field :name, class: "form-control" %></td>
+  <td><%= f.text_field :action, class: "form-control" %></td>
+</tr>

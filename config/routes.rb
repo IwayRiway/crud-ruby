@@ -1,8 +1,23 @@
 Rails.application.routes.draw do
-  root 'home#index'
+  resources :menus
+
+  post 'user/create', to: 'user#create'
+  get 'user/manage/:id', to: 'user#manage'
+  get 'user/index'
+
+  devise_for :users
+
+  get 'product_receivings/:type/pdf', to: 'product_receivings#pdf'
+  get 'product_receivings/:id/delete', to: 'product_receivings#delete'
+  post 'product_receivings/get_data', to: 'product_receivings#get_data'
+  resources :product_receivings
+
+  resources :products
+  resources :todo_lists
 
   get 'home/index'
   get 'home/about'
+  get 'home/test'
 
   resources :friends
 
@@ -13,8 +28,11 @@ Rails.application.routes.draw do
   get 'postingan/edit/:id', to: 'postingan#edit'
   post 'postingan/update/:id', to: 'postingan#update'
   get 'postingan/delete/:id', to: 'postingan#delete'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+#   devise_scope :user do
+#     root to: "devise/sessions#new"
+#   end  
+
+  root 'home#index'
+#   root new_user_session_path
 end

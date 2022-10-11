@@ -1,5 +1,8 @@
 class FriendsController < ApplicationController
+  include ApplicationHelper
+  before_action :permission, except: [:create, :update]
   before_action :set_friend, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!
 
   # GET /friends or /friends.json
   def index

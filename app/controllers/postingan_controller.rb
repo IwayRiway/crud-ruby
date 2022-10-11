@@ -1,5 +1,8 @@
 class PostinganController < ApplicationController
+  include ApplicationHelper
+  before_action :permission, except: [:create, :update, :detail]
   before_action :set_postingan, only: %i[ detail edit update destroy ]
+  before_action :authenticate_user!
 
   def index
     @data = Postingan.all

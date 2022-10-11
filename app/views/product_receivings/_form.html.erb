@@ -1,0 +1,87 @@
+<%= form_with(model: product_receiving) do |form| %>
+  <% if product_receiving.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(product_receiving.errors.count, "error") %> prohibited this product_receiving from being saved:</h2>
+
+      <ul>
+        <% product_receiving.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field form-group mb-3">
+    <%= form.label :document_number, class: "form-label", for: "document_number" %>
+    <% if @edit.present? %>
+    <%# PRD-RCV/2022/10/0001 %>
+        <%= form.text_field :document_number, class: "form-control", id: "document_number", readonly: "true" %>
+    <% else %>
+        <%#= form.text_field :document_number, class: "form-control", id: "document_number", readonly: "true", value: "PRD-RCV/#{Time.now.strftime("%Y")}/#{Time.now.strftime("%m")}/#{@number}" %>
+        <%= form.text_field :document_number, class: "form-control", id: "document_number", readonly: "true", value: "PRD-RCV/.../.../..." %>
+    <% end %>
+  </div>
+
+
+  <div class="field form-group mb-3">
+    <%= form.label :document_date, class: "form-label", for: "document_date" %>
+    <%= form.date_field :document_date, class: "form-control", id: "document_date" %>
+  </div>
+
+  <div class="field form-group mb-5">
+    <%= form.label :status, class: "form-label", for: "status" %>
+    <%= form.select :status, [["New", "New"], ["Approve 1", "approve1"], ["Cancel 1", "cancel1"], ["Approve 2", "approve2"], ["Cancel 2", "cancel2"], ["Approve 3", "approve3"], ["Cancel 3", "cancel3"]], {}, class: "form-select" %>
+  </div>
+
+<%# SINTAKS YG DITAMBAHKAN %>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Product ID</th>
+        <th>Quantity</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody class='fields'>
+        <% if @edit.present? %>
+            <%= form.fields_for :product_receiving_items, form.object.product_receiving_items.where(status: "Active") do |builder| %>
+                <%= render 'product_receiving_item', f: builder %>
+            <% end %>
+        <% else %>
+            <%= form.fields_for :product_receiving_items do |builder| %>
+                <%= render 'product_receiving_item', f: builder %>
+            <% end %>
+        <% end %>
+    </tbody>
+  </table>
+  <%# AKHIR SINTAKS YG DITAMBAHKAN %>
+
+  <%= link_to_add_row('Add Row', form, :product_receiving_items, class: 'btn btn-primary mb-5') %>
+  <%#= link_to_add_product_receiving_item('Add Row', form, :product_receiving_items, class: 'btn btn-primary mb-5') %>
+
+  <div>
+    <%= link_to "Cancel", product_receivings_path, class: "btn btn-danger" %>
+    <%= form.submit class:"btn btn-success" %>
+  </div>
+<% end %>
+
+<script>
+$( document ).ready(function() {
+
+  $('form').on('click', '.remove_record', function(event) {
+    $(this).prev('input[type=hidden]').val('1');
+    $(this).closest('tr').hide();
+    return event.preventDefault();
+  });
+
+  $('form').on('click', '.add_fields', function(event) {
+    var regexp, time;
+    time = new Date().getTime();
+    regexp = new RegExp($(this).data('id'), 'g');
+    $('.fields').append($(this).data('fields').replace(regexp, time));
+    return event.preventDefault();
+  });
+  
+});
+</script>
