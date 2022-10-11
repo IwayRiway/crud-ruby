@@ -73,3 +73,5 @@ class ProductsController < ApplicationController
       params.require(:product).permit(:part_id, :part_name, :status)
     end
 end
+
+# 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
