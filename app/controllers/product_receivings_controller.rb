@@ -106,14 +106,58 @@ class ProductReceivingsController < ApplicationController
             table.push([no=no+1, db.document_number, db.document_date, db.status])
         end
 
-        pdf.text "Product Receivings by Header", size: 12, style: :bold, align: :center
+        pdf.text "Product Receivings by Header", size: 14, style: :bold, align: :center
     else
-        pdf.text "Product Receivings by Item"
+        table = [['No', 'Document Number', 'Document Date', 'Status', 'Product', 'Qty', 'Status']];
+        get_product_receiving_items_all()
+
+        @data.map do |db|
+            table.push([no=no+1, db.product_receiving.document_number, db.product_receiving.document_date, db.product_receiving.status, db.product.part_name, db.quantity, db.status])
+        end
+
+        pdf.text "Product Receivings by Item", size: 14, style: :bold, align: :center
     end
     
     pdf.move_down 20
-    pdf.table (table)
-    send_data(pdf.render, filename: "test.pdf", type: "application/pdf")
+    pdf.table (table) do
+        row(0).font_style = :bold
+        self.row_colors = ["8D99AE", "FFFFFF"]
+        self.width = 550
+        self.header = true
+        self.cell_style = { :size => 8 }
+    end
+
+    send_data(pdf.render, filename: "produk receivings.pdf", type: "application/pdf")
+  end
+
+  def excel
+    xls = Axlsx::Package.new
+    workbook = xls.workbook
+    no = 0
+
+    if params[:type] == 'header'
+      get_product_receivings_all()
+      workbook.add_worksheet(name: "Product Receiving") do |sheet|
+        sheet.add_row ['Product Receivings']
+        sheet.add_row ['']
+        sheet.add_row ['No', 'Document Number', 'Document Date', 'Status']
+        @product_receivings.each do |db|
+          sheet.add_row [no=no+1, db.document_number, db.document_date, db.status]
+        end
+      end
+
+    else
+      get_product_receiving_items_all()
+      workbook.add_worksheet(name: "Product Receiving") do |sheet|
+        sheet.add_row ['No', 'Document Number', 'Document Date', 'Status', 'Product', 'Qty', 'Status']
+        @data.each do |db|
+          sheet.add_row [no=no+1, db.product_receiving.document_number, db.product_receiving.document_date, db.product_receiving.status, db.product.part_name, db.quantity, db.status]
+        end
+      end
+    end
+
+    xls.serialize("Product Receivings.xlsx")
+    send_file File.open('Product Receivings.xlsx')
   end
 
   private
@@ -128,6 +172,10 @@ class ProductReceivingsController < ApplicationController
 
     def get_product_receivings_all
         @product_receivings = ProductReceiving.all
+    end
+
+    def get_product_receiving_items_all
+      @data = ProductReceivingItem.includes(:product_receiving, :product).all
     end
 
     # Only allow a list of trusted parameters through.

@@ -76,3 +76,7 @@ gem 'devise', '~> 4.8', '>= 4.8.1'
 gem "prawn", "~> 2.4"
 
 gem "prawn-table", "~> 0.2.2"
+
+gem "axlsx", "~> 1.3"
+
+gem "zip-zip", "~> 0.3"

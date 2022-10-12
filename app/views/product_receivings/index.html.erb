@@ -14,7 +14,7 @@
 <div class="row">
     <div class="col-sm-2">
         <div class="btn-toolbar">
-            <%= link_to "EXCEL", "/product_receivings/header/pdf", class:"btn btn-sm btn-success mb-2 me-2", id: "excel" %>
+            <%= link_to "EXCEL", "/product_receivings/header/excel", class:"btn btn-sm btn-success mb-2 me-2", id: "excel" %>
             <%= link_to "PDF", "/product_receivings/header/pdf", class:"btn btn-sm btn-danger mb-2", id: "pdf" %>
         </div>
     </div>
@@ -75,6 +75,7 @@ $(document).ready( function () {
     $('#myTable2_wrapper').hide();
 
     function header(data) {
+      $('#excel').attr('href', '/product_receivings/header/excel');
       $('#pdf').attr('href', '/product_receivings/header/pdf');
       $('#myTable_wrapper').show();
       $('#myTable2_wrapper').hide();
@@ -97,6 +98,7 @@ $(document).ready( function () {
     }
 
     function item(data) {
+      $('#excel').attr('href', '/product_receivings/item/excel');
       $('#pdf').attr('href', '/product_receivings/item/pdf');
       $('#myTable_wrapper').hide();
       $('#myTable2_wrapper').show();
