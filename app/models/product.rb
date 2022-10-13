@@ -9,11 +9,8 @@ class Product < ApplicationRecord
         header = spreadsheet.row(1)
         (2..spreadsheet.last_row).each do |i|
           row = Hash[[header, spreadsheet.row(i)].transpose]
-          #   product = find_by_id(row["part_id"]) || new
           product = find_by(part_id: row["part_id"]) || new
           product.attributes = row.to_hash.slice(*accessible_attributes)
-        #   abort product.attributes.inspect
-        #   abort row.to_hash.inspect
           product.save!
         end
       end
