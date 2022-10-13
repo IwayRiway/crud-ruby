@@ -62,6 +62,13 @@ class ProductsController < ApplicationController
     end
   end
 
+  def import
+    Product.import(params[:file])
+    flash[:success] = "Data berhasil diimport"
+    redirect_to("/products")
+  end
+  
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_product
