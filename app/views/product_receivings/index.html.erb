@@ -1,0 +1,145 @@
+<h1>Data Product Receivings</h1>
+<div class="d-flex justify-content-between my-2">
+  <%= link_to "Buat Baru", new_product_receiving_path, class:"btn btn-primary mb-4" %>
+  <div class="row">
+    <div class="col-12">
+      <select class="form-select" aria-label="Default select example" name="type" id="type">
+        <option value="header">Header</option>
+        <option value="item">Item</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2">
+        <strong>Download:</strong><br>
+        <div class="btn-toolbar">
+            <%= link_to "EXCEL", "/product_receivings/header/excel", class:"btn btn-sm btn-success mb-2 me-2", id: "excel" %>
+            <%= link_to "PDF", "/product_receivings/header/pdf", class:"btn btn-sm btn-danger mb-2", id: "pdf" %>
+        </div>
+    </div>
+</div>
+
+<div id="product_receivings">
+  <table class="table table-striped table-bordered table-hover table-dark" id="myTable" style="width:100%">
+    <thead class="thead-dark">
+      <tr>
+        <th>No</th>
+        <th>Document Number</th>
+        <th>Tanggal</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% no=0 %>
+        <% @product_receivings.each do |data| %>
+            <tr>
+                <td><%= no += 1; %></td>
+                <td><%= data.document_number %></td>
+                <td><%= data.document_date.strftime("%d-%B-%Y") %></td>
+                <td><%= data.status %></td>
+                <td>
+                    <div class="btn-toolbar">
+                        <%= link_to "Lihat", data, class: "btn btn-outline-success btn-sm me-1" %>
+                        <%= link_to 'Edit', edit_product_receiving_path(data), class:"btn btn-outline-warning btn-sm me-1" %>
+                        <%= button_to 'Hapus', data, method: :delete,  class: "btn btn-outline-danger btn-sm me-1" %>
+                    </div>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+  </table>
+  <table class="table table-striped table-bordered table-hover table-dark" id="myTable2" style="width:100%">
+    <thead class="thead-dark">
+      <tr>
+        <th>No</th>
+        <th>Document Number</th>
+        <th>Tanggal</th>
+        <th>Status</th>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<script>
+$(document).ready( function () {
+    var table = $('#myTable').DataTable({scrollX: true,});
+    var table2 = $('#myTable2').DataTable({scrollX: true,});
+    $('#myTable2_wrapper').hide();
+
+    function header(data) {
+      $('#excel').attr('href', '/product_receivings/header/excel');
+      $('#pdf').attr('href', '/product_receivings/header/pdf');
+      $('#myTable_wrapper').show();
+      $('#myTable2_wrapper').hide();
+
+      $.each(data, function (i, key) {
+          table.row.add([
+            i + 1,
+            data[i].document_number,
+            data[i].document_date,
+            data[i].status,
+            `<div class="btn-toolbar">
+                <a class="btn btn-outline-success btn-sm me-1" href="/product_receivings/`+data[i].id+`">Lihat</a>
+                <a class="btn btn-outline-warning btn-sm me-1" href="/product_receivings/`+data[i].id+`/edit">Edit</a>
+                <a class="btn btn-outline-danger btn-sm me-1 tombol-hapus" href="/product_receivings/`+data[i].id+`/delete">Hapus</a>
+            </div>`
+          ]);
+      });
+      
+      table.draw();
+    }
+
+    function item(data) {
+      $('#excel').attr('href', '/product_receivings/item/excel');
+      $('#pdf').attr('href', '/product_receivings/item/pdf');
+      $('#myTable_wrapper').hide();
+      $('#myTable2_wrapper').show();
+
+      $.each(data, function (i, key) {
+        // console.log(data[i].product_receiving);
+          table2.row.add([
+            i + 1,
+            data[i].product_receiving.document_number,
+            data[i].product_receiving.document_date,
+            data[i].product_receiving.status,
+            data[i].product.part_name,
+            data[i].quantity,
+            data[i].status,
+            `<div class="btn-toolbar">
+                <a class="btn btn-outline-success btn-sm m-1" href="/product_receivings/`+data[i].product_receiving.id+`">Lihat</a>
+                <a class="btn btn-outline-warning btn-sm m-1" href="/product_receivings/`+data[i].product_receiving.id+`/edit">Edit</a>
+                <a class="btn btn-outline-danger btn-sm m-1 tombol-hapus" href="/product_receivings/`+data[i].product_receiving.id+`/delete">Hapus</a>
+            </div>`
+          ]);
+      });
+      table2.draw();
+    }
+
+    $("#type").change(function() {
+      var type = $(this).val();
+      table.clear();
+      table2.clear();
+
+      $.ajax({
+          url: "/product_receivings/get_data",
+          type: "POST",
+          data: {type: type},
+          success: function(data){
+            type === 'header' ? header(data) : item(data);
+          },
+          error: function(data){
+            console.log(data);
+          }
+      });
+    });
+});
+</script>

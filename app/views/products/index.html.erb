@@ -61,7 +61,7 @@
       </div>
       <div class="modal-body">
         <%= form_tag import_products_path, multipart: true do %>
-            <%= file_field_tag :file %>
+            <%= file_field_tag :file, accept: ".xlsx, .xls, .csv" %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
