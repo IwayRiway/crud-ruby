@@ -29,23 +29,28 @@ module ApplicationHelper
             action = "destroy"
         end
 
-        sql = "SELECT 
-                    a.* 
-                FROM 
-                    menus a 
-                    JOIN functions b ON a.id = b.menu_id 
-                    JOIN permissions c ON b.id = c.function_id 
-                WHERE 
-                    c.user_id = #{current_user.id} 
-                GROUP BY 
-                    a.name 
-                ORDER BY 
-                    id asc"
-        @my_menus = ActiveRecord::Base.connection.execute(sql)
-        # abort @my_menus.inspect
- 
-        cek = User.joins(:permissions => [{:function => :menu }]).where('functions.action' => action, "menus.controller" => controller).find_by(id: current_user.id)
-        if cek == nil && action != "test" && action != "show" #cek apakah disini ada akses atau tidak
+        # sql = "SELECT 
+        #             a.* 
+        #         FROM 
+        #             menus a 
+        #             JOIN functions b ON a.id = b.menu_id 
+        #             JOIN permissions c ON b.id = c.function_id 
+        #         WHERE 
+        #             c.user_id = #{current_user.id} 
+        #         GROUP BY 
+        #             a.name 
+        #         ORDER BY 
+        #             id asc"
+        # @my_menus = ActiveRecord::Base.connection.execute(sql)
+
+        # cek = User.joins(:permissions => [{:function => :menu }]).where('functions.action' => action, "menus.controller" => controller).find_by(id: current_user.id)
+        # if cek == nil && action != "test" && action != "show" #cek apakah disini ada akses atau tidak
+        #     redirect_to('/home/test')
+        # end
+        
+        @my_menus = Menu.includes(functions: [:permissions]).where(permissions: {user_id: current_user.id})
+        cek = @my_menus.where('functions.action' => action, "menus.controller" => controller, "permissions.user_id" => current_user.id).count
+        if cek == 0 && action != "test" && action != "show" #cek apakah disini ada akses atau tidak
             redirect_to('/home/test')
         end
     end
